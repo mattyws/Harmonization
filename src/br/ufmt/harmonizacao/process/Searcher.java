@@ -13,13 +13,16 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.index.SegmentReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
@@ -42,7 +45,7 @@ public class Searcher {
 	private Directory dir;
 	// Leitor de diretórios do lucene
 	private IndexSearcher searcher;
-	private IndexReader reader = new SegmentReader();
+	private IndexReader reader;
 	// O analyzer
 	private Analyzer analyzer = new PatenteeAnalyzer(Version.LUCENE_36);
 	String[] stopWords = { "inc", "machines", "ltd", "technology" };
@@ -51,7 +54,7 @@ public class Searcher {
 		// Diretório para os indices do lucene
 		dir = new SimpleFSDirectory(new File(caminho));
 		// instanciando o leitor do diretório
-		reader = reader.open(dir);
+		reader = IndexReader.open(dir);
 		// instanciando o pesquisador com o leitor de diretórios
 		searcher = new IndexSearcher(reader);
 	}
@@ -102,15 +105,20 @@ public class Searcher {
 			}
 
 			BooleanQuery bq = new BooleanQuery();
+			BooleanQuery acronymBq = null;
+			BooleanQuery wrapBq = new BooleanQuery();
 			String[] tokens = valor.split(" ");
 			for (int i = 0; i < tokens.length; i++) {
 				if (tokens.length >= 2) {
+					acronymBq = new BooleanQuery();
 					switch (i) {
 					case 0:
+						acronymBq.add(new TermQuery(new Term(campo, tokens[i])), Occur.MUST);
 						bq.add(new TermQuery(new Term(campo, tokens[i])),
 								Occur.SHOULD);
 						break;
 					case 1:
+						acronymBq.add(new FuzzyQuery(new Term(campo, tokens[i])), Occur.MUST_NOT);
 						bq.add(new FuzzyQuery(new Term(campo, tokens[i])),
 								Occur.SHOULD);
 						break;
@@ -133,8 +141,13 @@ public class Searcher {
 			// Aqui termina
 			// Cria uma fuzzyquery, ela que fará a busca de aproximação
 
+			wrapBq.add(bq, Occur.MUST);
+			if(acronymBq != null) {
+				System.out.println("FOIII");
+				wrapBq.add(acronymBq, Occur.MUST_NOT);
+			}
 			// Pegando os documentos encontrado na pesquisa
-			ScoreDoc[] hits = searcher.search(bq, 6).scoreDocs;
+			ScoreDoc[] hits = searcher.search(wrapBq, 8).scoreDocs;
 			if (hits.length >= 0) {
 				// Imprimindo a string que foi utilizada na busca
 				out.write(valor);

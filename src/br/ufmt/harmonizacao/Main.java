@@ -59,7 +59,7 @@ public class Main {
 		// Vamos criar um teste para ver se está dando certo :)
 		nomes.addDepositante(new Depositante("IBM", "US"));
 		nomes.addDepositante(new Depositante("International Business Machine", "US"));
-
+		
 		// Criando o indexador do projeto, ele que vai criar os indices do
 		// lucene
 		// A pasta passada será a pasta onde será armazenado os arquivos de
@@ -83,13 +83,13 @@ public class Main {
 		try {
 			// Vamos fazer as pesquisas para todos os nomes que está nos
 			// depositantes
-			//for (Depositante d : nomes.getDepositantes()) {
+			//for (Inventor d : nomes.getInventores()()) {
 				// Realiza a pesquisa pelo método da classe Searcher
-				//searcher.pesquisar("International Business Machine", "depositante", out);
+				//searcher.pesquisar("KAZAKIDIS PROKOPIOS NIKOLAOU", "inventor", out);
+			searcher.pesquisar("Apple Inc", "depositante", out);
 				searcher.pesquisar("International Business Machine", "depositante", out);
 				searcher.pesquisar("Soft Machines Inc", "depositante", out);
 				searcher.pesquisar("SAWCHENKO PAUL F", "depositante", out);
-				searcher.pesquisar("GEN HOSPITAL CORP", "depositante", out);
 				searcher.pesquisar("GEN HOSPITAL CORP", "depositante", out);
 				searcher.pesquisar("PROTEOLOGICS INC", "depositante", out);
 				searcher.pesquisar("ECOPACIFIC EMPRESA COM DEL PACIFICO S A", "depositante", out);

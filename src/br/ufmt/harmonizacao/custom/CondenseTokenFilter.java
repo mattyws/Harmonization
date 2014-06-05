@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.util.Version;
 
 // CondenseFilter code was not analyzed yet, i take from a stack overflow answer
@@ -25,6 +26,7 @@ public class CondenseTokenFilter extends TokenFilter {
 	private final StringBuilder sb = new StringBuilder();
 	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
 	private final OffsetAttribute offsetAtt = addAttribute(OffsetAttribute.class);
+	private final PositionIncrementAttribute posOffset = addAttribute(PositionIncrementAttribute.class);
 	private boolean consumed; // true if we already consumed
 
 	protected CondenseTokenFilter(TokenStream input) {
@@ -66,14 +68,19 @@ public class CondenseTokenFilter extends TokenFilter {
 						acronym = acronym + word.charAt(0);
 					}
 				}
-				if (acronym.length() > 2) {
-					name = acronym + " " + name;
-				}
+				//if (acronym.length() > 2) {
+					//name = acronym + " " + name;
+				//}
 				name = name.replaceAll("_", "");
 				sb.delete(0, sb.length());
 				sb.append(name);
-				termAtt.setEmpty().append(name);
-				offsetAtt.setOffset(startOffset, endOffset);
+				termAtt.setEmpty();	
+				if(acronym.length() > 2) {
+					termAtt.append(acronym);
+				}
+				termAtt.append(name);
+				posOffset.setPositionIncrement(1);
+				offsetAtt.setOffset(startOffset, endOffset);;
 			}
 			return true;
 		} else {

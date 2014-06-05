@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.apache.lucene.analysis.standard.ClassicTokenizer;
 import org.apache.lucene.util.Version;
 
@@ -26,9 +27,9 @@ public class PatenteeAnalyzer extends Analyzer {
 
 	@Override
 	public TokenStream tokenStream(String field, Reader reader) {
-		CharArraySet stopWords = this.stopWords();
+		CharArraySet commonDescriptors = this.commonDescriptors();
 		// Iniciate a WhitespaceTokenizer, to remove the stop words in next step
-		Tokenizer source = new ClassicTokenizer(Version.LUCENE_36, reader);
+		Tokenizer source = new WhitespaceTokenizer(Version.LUCENE_36, reader);
 
 		/*
 		 * This part will : Normalize all characters to lowercase Turn accented
@@ -37,7 +38,7 @@ public class PatenteeAnalyzer extends Analyzer {
 		 */
 		TokenStream sink = new CondenseTokenFilter(new StopFilter(matchVersion,
 				new ASCIIFoldingFilter(
-						new LowerCaseFilter(matchVersion, source)), stopWords) );
+						new LowerCaseFilter(matchVersion, source)), commonDescriptors) );
 
 		return sink;
 	}
@@ -49,7 +50,7 @@ public class PatenteeAnalyzer extends Analyzer {
 	 * 
 	 * @return a CharArraySet from stop words
 	 */
-	private CharArraySet stopWords() {
+	private CharArraySet commonDescriptors() {
 		// Instanciate the CharArraySet
 		CharArraySet cstopWords = new CharArraySet(Version.LUCENE_CURRENT, 2,
 				true);
