@@ -36,9 +36,11 @@ public class PatenteeAnalyzer extends Analyzer {
 		 * letters to they ASCII equivalents Remove all the stopwords from
 		 * source Condense the string TODO: Remove the punctuation characters
 		 */
-		TokenStream sink = new CondenseTokenFilter(new StopFilter(matchVersion,
+		TokenStream sink =new WhitespaceTokenFilter(new CondenseTokenFilter(
+				new CommonDescriptorsTokenFilter(
+				new StopFilter(matchVersion,
 				new ASCIIFoldingFilter(
-						new LowerCaseFilter(matchVersion, source)), commonDescriptors) );
+						new LowerCaseFilter(matchVersion, source)), commonDescriptors) )));
 
 		return sink;
 	}

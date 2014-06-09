@@ -9,6 +9,7 @@ import java.util.Collection;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
@@ -17,6 +18,7 @@ import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.index.SegmentReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Explanation;
@@ -100,7 +102,6 @@ public class Searcher {
 			// Recuperando o valor de texto da stream
 			valor = "";
 			while (stream.incrementToken()) {
-				System.out.println(attr.toString());
 				valor = valor + attr.toString() + ' ';
 			}
 
@@ -113,8 +114,8 @@ public class Searcher {
 					acronymBq = new BooleanQuery();
 					switch (i) {
 					case 0:
-						acronymBq.add(new TermQuery(new Term(campo, tokens[i])), Occur.MUST);
-						bq.add(new TermQuery(new Term(campo, tokens[i])),
+						acronymBq.add(new PrefixQuery(new Term(campo, tokens[i])), Occur.MUST);
+						bq.add(new PrefixQuery(new Term(campo, tokens[i])),
 								Occur.SHOULD);
 						break;
 					case 1:

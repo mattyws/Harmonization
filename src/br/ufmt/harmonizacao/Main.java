@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.util.Version;
 
+import br.ufmt.harmonizacao.custom.CommonDescriptorsSet;
 import br.ufmt.harmonizacao.custom.PatenteeAnalyzer;
 import br.ufmt.harmonizacao.model.Depositante;
 import br.ufmt.harmonizacao.model.Inventor;
@@ -31,34 +32,14 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 
 		System.out.println("Iniciou!!");
-		/*Analyzer analyzer = new PatenteeAnalyzer(Version.LUCENE_47);
-		// Cria uma stream de tokens com o analyzer
-		TokenStream stream = analyzer.tokenStream("inventor",
-				new StringReader("Tentativa! de,@$@#$3323$# limpar!@#433 pontuação!#@$%5394783#$#$,.><;/?"));
-		// Passa os atributos da stream para que seja possível recuperar seu
-		// valor puro de texto
-		CharTermAttribute attr = stream.getAttribute(CharTermAttribute.class);
-		// resetar a stream é necessário fazer, não sei o porque, mais se não o
-		// fizer da erro
-		stream.reset();
-		// Recuperando o valor de texto da stream
-		String valor = "";
-		while (stream.incrementToken()) {
-			valor = valor + attr.toString();
-		}
-		stream.end();
-		stream.close();
-		System.out.println(valor);*/
+		/*Analyzer analyzer = new PatenteeAnalyzer(Version.LUCENE_36);
 
 		// Pega nomes de um arquivo csv, o arquivo deve estar apenas com as
 		// colunas de Inventor e Depositante
 		Nomes nomes = Nomes
 				.criarPorArquivoCsv("/home/mattyws/Documentos/results.csv");
 		System.out.println("Criou os nomes");
-		// Nomes nomes = new Nomes();
 		// Vamos criar um teste para ver se está dando certo :)
-		nomes.addDepositante(new Depositante("IBM", "US"));
-		nomes.addDepositante(new Depositante("International Business Machine", "US"));
 		
 		// Criando o indexador do projeto, ele que vai criar os indices do
 		// lucene
@@ -68,7 +49,7 @@ public class Main {
 		// Indexa todos os nomes do arquivo
 		indexer.indexar(nomes);
 		indexer.close();
-		System.out.println("Indexou!");
+		System.out.println("Indexou!");*/
 
 		// pesquisa no diretório de indices do lucene, o diretório deve ser o
 		// mesmo
@@ -86,7 +67,7 @@ public class Main {
 			//for (Inventor d : nomes.getInventores()()) {
 				// Realiza a pesquisa pelo método da classe Searcher
 				//searcher.pesquisar("KAZAKIDIS PROKOPIOS NIKOLAOU", "inventor", out);
-			searcher.pesquisar("Apple Inc", "depositante", out);
+				searcher.pesquisar("Apple Inc", "depositante", out);
 				searcher.pesquisar("International Business Machine", "depositante", out);
 				searcher.pesquisar("Soft Machines Inc", "depositante", out);
 				searcher.pesquisar("SAWCHENKO PAUL F", "depositante", out);
@@ -106,4 +87,5 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
+	
 }
