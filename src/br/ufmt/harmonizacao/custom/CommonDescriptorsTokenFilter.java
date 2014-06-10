@@ -16,7 +16,8 @@ public class CommonDescriptorsTokenFilter extends TokenFilter {
 	private CommonDescriptorsSet descriptorsSet = new CommonDescriptorsSet(
 			"files/descriptors");
 	public List<String> tokens = new ArrayList<String>();
-	public boolean consumed = false, removed = false, constructed = false;
+	public boolean consumed = false, removed = false, constructed = false,
+			removeIt;
 	int pos, start;
 	String text;
 
@@ -37,6 +38,19 @@ public class CommonDescriptorsTokenFilter extends TokenFilter {
 			if (!removed) {
 				while (pos < tokens.size()) {
 					if (descriptorsSet.contains(tokens.get(pos))) {
+						removeIt = true;
+						int j = pos;
+						while (j < tokens.size()) {
+							if (!descriptorsSet.contains(tokens.get(j))) {
+								removeIt = false;
+							}
+							j++;
+						}
+						if (removeIt) {
+							tokens.remove(pos);
+						}
+					}
+					if(pos < tokens.size() && tokens.get(pos).length() <= 1) {
 						tokens.remove(pos);
 					}
 					pos++;
@@ -45,6 +59,7 @@ public class CommonDescriptorsTokenFilter extends TokenFilter {
 				return true;
 			}
 		}
+		//
 		if (removed) {
 			if (!constructed) {
 				text = "";
@@ -52,21 +67,21 @@ public class CommonDescriptorsTokenFilter extends TokenFilter {
 					text = text + token + " ";
 				}
 				constructed = true;
-				text = text.substring(0, text.length()-1);
+				text = text.substring(0, text.length() - 1);
 				termAtt.setEmpty();
 				start = 0;
 			}
 			if (start < text.length() && !text.isEmpty()) {
 				int i;
 				for (i = start; i < text.length(); i++) {
-					if(Character.isWhitespace(text.charAt(i))) {
+					if (Character.isWhitespace(text.charAt(i))) {
 						offsetAtt.setOffset(start, i);
 						termAtt.copyBuffer(text.toCharArray(), start, i - start);
 						start = i + 1;
 						return true;
 					}
 				}
-				if(i == text.length()) {
+				if (i == text.length()) {
 					offsetAtt.setOffset(start, i);
 					termAtt.copyBuffer(text.toCharArray(), start, i - start);
 					start = i + 1;

@@ -107,6 +107,7 @@ public class Searcher {
 
 			BooleanQuery bq = new BooleanQuery();
 			BooleanQuery acronymBq = null;
+			String query = "";
 			BooleanQuery wrapBq = new BooleanQuery();
 			String[] tokens = valor.split(" ");
 			for (int i = 0; i < tokens.length; i++) {
@@ -114,11 +115,13 @@ public class Searcher {
 					acronymBq = new BooleanQuery();
 					switch (i) {
 					case 0:
+						query = query + '+' + tokens[i] + '*';
 						acronymBq.add(new PrefixQuery(new Term(campo, tokens[i])), Occur.MUST);
 						bq.add(new PrefixQuery(new Term(campo, tokens[i])),
 								Occur.SHOULD);
 						break;
 					case 1:
+						query = query + " -" + tokens[i] + '~';
 						acronymBq.add(new FuzzyQuery(new Term(campo, tokens[i])), Occur.MUST_NOT);
 						bq.add(new FuzzyQuery(new Term(campo, tokens[i])),
 								Occur.SHOULD);
@@ -145,6 +148,7 @@ public class Searcher {
 			wrapBq.add(bq, Occur.MUST);
 			if(acronymBq != null) {
 				System.out.println("FOIII");
+				//new QueryParser(Version.LUCENE_36, campo, new StandardAnalyzer(Version.LUCENE_36)).parse(query)
 				wrapBq.add(acronymBq, Occur.MUST_NOT);
 			}
 			// Pegando os documentos encontrado na pesquisa

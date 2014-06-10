@@ -14,6 +14,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.WhitespaceTokenizer;
 import org.apache.lucene.analysis.standard.ClassicTokenizer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
 
 public class PatenteeAnalyzer extends Analyzer {
@@ -27,7 +28,6 @@ public class PatenteeAnalyzer extends Analyzer {
 
 	@Override
 	public TokenStream tokenStream(String field, Reader reader) {
-		CharArraySet commonDescriptors = this.commonDescriptors();
 		// Iniciate a WhitespaceTokenizer, to remove the stop words in next step
 		Tokenizer source = new WhitespaceTokenizer(Version.LUCENE_36, reader);
 
@@ -40,28 +40,9 @@ public class PatenteeAnalyzer extends Analyzer {
 				new CommonDescriptorsTokenFilter(
 				new StopFilter(matchVersion,
 				new ASCIIFoldingFilter(
-						new LowerCaseFilter(matchVersion, source)), commonDescriptors) )));
+						new LowerCaseFilter(matchVersion, source)), StandardAnalyzer.STOP_WORDS_SET) )));
 
 		return sink;
-	}
-
-	/**
-	 * Create the stop words set
-	 * 
-	 * TODO: Change the source, beacause is a String vector from this class
-	 * 
-	 * @return a CharArraySet from stop words
-	 */
-	private CharArraySet commonDescriptors() {
-		// Instanciate the CharArraySet
-		CharArraySet cstopWords = new CharArraySet(Version.LUCENE_CURRENT, 2,
-				true);
-		// Get from the souce, here is a Array of strings
-		for (String s : stopWords) {
-			cstopWords.add(s);
-		}
-		// Return it
-		return cstopWords;
 	}
 
 }
