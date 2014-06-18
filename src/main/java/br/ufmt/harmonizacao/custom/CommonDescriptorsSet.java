@@ -7,11 +7,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class will contains the commons company descriptors
+ * Now, it's just use a ArrayList, but this may change in the future
+ * @author mattyws
+ */
 public class CommonDescriptorsSet {
 	
 	private List<String> commonDescriptors = new ArrayList<String>();
 	private BufferedReader reader;
 
+        /**
+         * The constructor
+         * @param caminho path for the file containing the commons descriptors 
+         */
 	public CommonDescriptorsSet(String caminho) {
 		try {
 			reader = new BufferedReader(new FileReader(caminho));
@@ -24,6 +33,10 @@ public class CommonDescriptorsSet {
 		
 	}
 
+        /**
+         * Read the file passed by parameter in the constructor
+         * @throws IOException 
+         */
 	private void readFile() throws IOException {
 		String linha;
 		while(reader.ready()) {
@@ -33,6 +46,11 @@ public class CommonDescriptorsSet {
 		reader.close();
 	}
 	
+        /**
+         * See if a string exists in the list
+         * @param descriptor the text that will be searched
+         * @return true if exists in list, false otherwise
+         */
 	public boolean contains(String descriptor) {
 		return commonDescriptors.contains(descriptor);
 	}
