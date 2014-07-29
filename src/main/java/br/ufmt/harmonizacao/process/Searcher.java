@@ -1,6 +1,7 @@
 package br.ufmt.harmonizacao.process;
 
-import br.ufmt.harmonizacao.custom.LengthQuery;
+import br.ufmt.harmonizacao.indexer.resources.analysis.PatenteeAnalyzer;
+import br.ufmt.harmonizacao.indexer.resources.search.LengthQuery;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +24,6 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
-import br.ufmt.harmonizacao.custom.PatenteeAnalyzer;
 import java.text.ParseException;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.Filter;
